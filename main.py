@@ -42,7 +42,7 @@ crear_naves()
 def decrement(lista,objeto):
     for i in lista:
         objeto-=1
-        print(objeto)
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
