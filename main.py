@@ -9,7 +9,7 @@ WIDTH, HEIGHT = 1000, 700
 SIDE = (WIDTH, HEIGHT)
 
 # ventana
-venatana = pygame.display.set_mode(SIDE)
+ventana = pygame.display.set_mode(SIDE)
 CLOCK = pygame.time.Clock()
 
 # sprites
@@ -21,22 +21,28 @@ player.rect.y = 600
 player.rect.x = 400
 player_list.add(player)
 sprite_list.add(player)
-life_player=7
 Font=pygame.font.Font(None, 35)
 # nave villano
+villano=Villano()
 nave_list = pygame.sprite.Group()
-
+villano_list=pygame.sprite.Group()
+villainSpawned = False
 # laser
 laser_list = pygame.sprite.Group()
 
-villainSpawned = False
+def crear_naves():
+    for i in range(50, 900, 100):
+        for j in range(50, 300, 100):
+            nave = Nave(j, i)
+            sprite_list.add(nave)
+            nave_list.add(nave)
 
-for i in range(50, 900, 100):
-    for j in range(50, 300, 100):
-        nave = Nave(j, i)
-        sprite_list.add(nave)
-        nave_list.add(nave)
 
+crear_naves()
+def decrement(lista,objeto):
+    for i in lista:
+        objeto-=1
+        print(objeto)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -61,27 +67,38 @@ while True:
                 player.velocidad = 0
 
     collision_list=pygame.sprite.spritecollide(player, nave_list, True)
-    for collision in collision_list:
-        life_player-=1
+    villano_list_collision=[]
 
-    for laser in laser_list:
-        nave_list_colicion=pygame.sprite.spritecollide(laser, nave_list, True)
-        if laser.rect.y<0:
-            laser_list.remove(laser)
-
+    decrement(collision_list, player.vidas)
     # nave final
     if len(nave_list) == 0 and not villainSpawned:        
         villainSpawned = True
-        villano=Villano()
+        villano_list.add(villano)
         sprite_list.add(villano)
         villano.rect.x=500
         villano.rect.y=20
+        crear_naves()
+
+    for laser in laser_list:
+        nave_list_collsiion=pygame.sprite.spritecollide(laser, nave_list, True)
+        villano_list_collision.append(pygame.sprite.spritecollide(laser, villano_list, False))
+        if laser.rect.y<0:
+            laser_list.remove(laser)            
     
-    venatana.fill(BLACK)
+    decrement(villano_list_collision, villano.vidas)
+
+    if villano.vidas<0:
+        villano_list_collision.dokill(True)
+        sprite_list.remove(villano)
+        vida_villano.remove(villano) 
+        
+    ventana.fill(BLACK)
     # pintando texto de vida
-    text=Font.render(f'life: {life_player}/7', True, (255, 255, 255))
-    venatana.blit(text, (700, 20))
+    text=Font.render(f'life: {player.vidas}/7', False, (255, 255, 255))
+    text2=Font.render(f'life: {villano.vidas}/5', False, (255, 255, 255))
+    ventana.blit(text, (700, 20))
+    ventana.blit(text2, (20, 20))
     sprite_list.update()
-    sprite_list.draw(venatana)
+    sprite_list.draw(ventana)
     pygame.display.flip()
     CLOCK.tick(80)

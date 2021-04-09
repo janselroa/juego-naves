@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 
 pygame.init()
 
@@ -13,6 +13,7 @@ class Player(pygame.sprite.Sprite):
 		self.image.set_colorkey(BLACK)
 		self.rect=self.image.get_rect()
 		self.velocidad=0
+		self.vidas=7
 		
 	def update(self):
 		self.rect.x+=self.velocidad
@@ -27,7 +28,7 @@ class Nave(pygame.sprite.Sprite):
 		self.rect=self.image.get_rect()
 		self.rect.y=y
 		self.rect.x=x
-		self.velocidad=1
+		self.velocidad=random.randint(1, 3)
 
 	def update(self):
 		self.rect.y+=1
@@ -58,7 +59,8 @@ class Villano(pygame.sprite.Sprite):
 		self.image=pygame.image.load('img/villano.png')
 		self.image.set_colorkey(BLACK)
 		self.rect=self.image.get_rect()
-		self.velocidad=3
+		self.velocidad=10
+		self.vidas=5
 
 	def update(self):
 		self.rect.x+=self.velocidad
